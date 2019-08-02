@@ -476,10 +476,12 @@ def rabbit_read_thread():
     channel_read.queue_bind('bot', 'main', 'parseResult')
     channel_read.queue_bind('decoders', 'main', 'parseRequest')
     channel_read.basic_consume('bot', on_message)
-    try:
-        channel_read.start_consuming()
-    except KeyboardInterrupt:
-        channel_read.stop_consuming()
+    while True:
+        try:
+            channel_read.start_consuming()
+            break
+        except Exception as e:
+            LOG.info('rabbit_read_thread Exception %s' % (e))
 
 
 def rabbit_write_thread():
